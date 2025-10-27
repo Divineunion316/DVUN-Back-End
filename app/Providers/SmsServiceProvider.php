@@ -20,6 +20,12 @@ class SmsServiceProvider extends ServiceProvider
             default => SmsService::class,
         };
 
-        $this->app->register(\App\Providers\SmsServiceProvider::class);
+        // ✅ This is the missing line
+        $this->app->bind(SmsServiceInterface::class, $implementation);
+    }
+
+    public function boot(): void
+    {
+        //
     }
 }
