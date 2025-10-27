@@ -9,9 +9,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use App\Contracts\SmsServiceInterface;
 
 class AuthController extends Controller
 {
+
+    protected $smsService;
+
+    public function __construct(SmsServiceInterface $smsService)
+    {
+        $this->smsService = $smsService;
+    }
+    
     // 1️⃣ Send OTP
     public function sendOtp(Request $request)
     {
@@ -27,6 +36,11 @@ class AuthController extends Controller
                 'expires_at' => Carbon::now()->addMinutes(5)
             ]
         );
+
+        $message = "Your OTP code is {$otpCode}";
+
+        // use the common service
+        $this->smsService->send($request->mobile, $message);
 
         // 👇 Here you can integrate with any SMS provider
         // For now, just return OTP in response
