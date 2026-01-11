@@ -170,6 +170,9 @@ class AuthController extends Controller
             'marital_status' => 'nullable|in:single,married,divorced,widowed',
 
             'current_location' => 'nullable|string|max:255',
+            'state' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+
             'mother_tongue' => 'nullable|string|max:255',
             'known_languages' => 'nullable|array'
         ]);
@@ -195,6 +198,8 @@ class AuthController extends Controller
                 'gender' => $request->gender,
                 'marital_status' => $request->marital_status,
                 'current_location' => $request->current_location,
+                'state' => $request->state,
+                'city' => $request->city,
                 'mother_tongue' => $request->mother_tongue,
                 'known_languages' => $request->known_languages
             ]

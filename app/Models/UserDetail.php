@@ -16,9 +16,12 @@ class UserDetail extends Model
         'gender',
         'marital_status',
         'current_location',
+        'state',
+        'city',
         'mother_tongue',
-        'known_languages'
+        'known_languages',
     ];
+
 
     protected $casts = [
         'known_languages' => 'array',
