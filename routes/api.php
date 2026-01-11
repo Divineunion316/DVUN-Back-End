@@ -11,3 +11,11 @@ Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/create-password', [AuthController::class, 'createPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/profile', [AuthController::class, 'profile']);
+
+});

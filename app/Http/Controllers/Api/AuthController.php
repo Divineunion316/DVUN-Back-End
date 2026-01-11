@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Otp;
 use App\Models\User;
+use App\Models\UserDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
@@ -149,5 +150,67 @@ class AuthController extends Controller
             'token' => $token,
             'user' => $user
         ]);
+    }
+
+    public function register(Request $request)
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'mobile' => 'required|digits:10',
+
+            'creating_account_for_me' => 'nullable|boolean',
+            'name' => 'nullable|string|max:255',
+            'dob' => 'nullable|date',
+
+            'height' => 'nullable|numeric',
+            'weight' => 'nullable|numeric',
+
+            'gender' => 'nullable|in:male,female,other',
+            'marital_status' => 'nullable|in:single,married,divorced,widowed',
+
+            'current_location' => 'nullable|string|max:255',
+            'mother_tongue' => 'nullable|string|max:255',
+            'known_languages' => 'nullable|array'
+        ]);
+
+        // 🔐 Ensure user exists (OTP + password step must be done)
+        $user = User::where('mobile', $request->mobile)->first();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found. Please verify OTP and create password first.'
+            ], 404);
+        }
+
+        // 🧾 Create or update user details
+        $userDetail = UserDetail::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'creating_account_for_me' => $request->creating_account_for_me,
+                'name' => $request->name,
+                'dob' => $request->dob,
+                'height' => $request->height,
+                'weight' => $request->weight,
+                'gender' => $request->gender,
+                'marital_status' => $request->marital_status,
+                'current_location' => $request->current_location,
+                'mother_tongue' => $request->mother_tongue,
+                'known_languages' => $request->known_languages
+            ]
+        );
+
+        return response()->json([
+            'message' => 'Registration completed successfully',
+            'user' => $user,
+            'user_details' => $userDetail
+        ]);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Logged out successfully']);
     }
 }
